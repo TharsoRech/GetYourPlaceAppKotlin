@@ -2,13 +2,14 @@ package com.getyourplace
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent // The critical import for setContent
+import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween // The import for tween
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import com.getyourplace.Persistence.AppDatabase
 import com.getyourplace.Persistence.ItemRepository
 import com.getyourplace.Components.SplashScreenView
+import com.getyourplace.Views.Pages.HomeScreen
 
 import kotlinx.coroutines.delay
 
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 label = "SplashToHome"
             ) { screenActive ->
                 if (screenActive) {
-
+                    HomeScreen(itemRepository)
                 } else {
                     SplashScreenView()
                 }
