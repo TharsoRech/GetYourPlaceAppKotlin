@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.getyourplace.Models.ChatMessage
 import java.util.Date
@@ -89,5 +90,26 @@ fun ChatView(
             // Padding for system bars if needed (similar to .padding(.bottom, 84))
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun ChatViewPreview() {
+    // Mock data for the preview
+    val mockMessages = remember {
+        mutableStateListOf(
+            ChatMessage(text = "Hello! Is this still available?", isSender = false, timestamp = Date()),
+            ChatMessage(text = "Yes, it is. When would you like to see it?", isSender = true, timestamp = Date()),
+            ChatMessage(text = "How about tomorrow at 2 PM?", isSender = false, timestamp = Date()),
+            ChatMessage(text = "That works for me! See you then.", isSender = true, timestamp = Date())
+        )
+    }
+
+    MaterialTheme {
+        ChatView(
+            title = "John Doe",
+            messages = mockMessages
+        )
     }
 }

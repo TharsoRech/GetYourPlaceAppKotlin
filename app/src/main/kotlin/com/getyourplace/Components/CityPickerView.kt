@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.getyourplace.Models.ResidenceFilter
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import kotlin.collections.set
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,5 +109,29 @@ fun CityPickerView(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Composable
+fun CityPickerViewPreview() {
+    // 1. Create a mock filter state for the preview
+    val mockFilter = remember {
+        ResidenceFilter(
+            cities = listOf("New York", "Rio de Janeiro", "Budapest", "Atlanta", "London", "Los Angeles", "Lisbon"),
+            citySelected = "",
+            selections = mutableMapOf()
+        )
+    }
+
+    // 2. Wrap in a box with padding to see the "Floating" effect of the suggestion list
+    Box(modifier = Modifier.padding(20.dp).fillMaxSize()) {
+        CityPickerView(
+            filter = mockFilter,
+            onFilterChanged = { updatedFilter ->
+                // In a real app, this would update your ViewModel
+                println("City selected: ${updatedFilter.citySelected}")
+            }
+        )
     }
 }

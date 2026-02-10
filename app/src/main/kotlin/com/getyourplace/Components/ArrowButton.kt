@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -50,5 +51,29 @@ fun ArrowButton(
                 modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArrowButtonPreview() {
+    Column(
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Standard usage
+        ArrowButton(
+            title = "Get Started",
+            onClick = { /* Handle click */ }
+        )
+
+        // Usage with a custom modifier (e.g., smaller width)
+        ArrowButton(
+            title = "Next Step",
+            modifier = Modifier.width(200.dp),
+            onClick = { /* Handle click */ }
+        )
     }
 }

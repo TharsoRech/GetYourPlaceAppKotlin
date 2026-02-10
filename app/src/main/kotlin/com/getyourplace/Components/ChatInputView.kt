@@ -10,7 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,5 +71,30 @@ fun ChatInputView(
                 )
             }
         }
+    }
+}
+
+@Preview(name = "Static Preview - Empty")
+@Composable
+fun ChatInputViewPreview() {
+    ChatInputView(
+        text = "",
+        onTextChange = {},
+        onSend = {}
+    )
+}
+
+@Preview(name = "Interactive Typing Test")
+@Composable
+fun ChatInputViewInteractivePreview() {
+    // This state allows the preview to actually respond to typing
+    var testText by remember { mutableStateOf("Hey, check this out!") }
+
+    Box(modifier = Modifier.background(Color.Gray).padding(20.dp)) {
+        ChatInputView(
+            text = testText,
+            onTextChange = { testText = it },
+            onSend = { testText = "" }
+        )
     }
 }

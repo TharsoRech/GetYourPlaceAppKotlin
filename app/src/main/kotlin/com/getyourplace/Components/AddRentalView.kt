@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.getyourplace.Models.RentalHistory
 import com.getyourplace.Models.RentalStatus
@@ -121,5 +122,19 @@ fun DateRow(label: String, dateString: String, onClick: () -> Unit) {
         TextButton(onClick = onClick) {
             Text(dateString)
         }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun AddRentalViewPreview() {
+    // We wrap it in our theme to ensure the Dark Mode displays correctly in the preview
+    MaterialTheme(colorScheme = darkColorScheme()) {
+        AddRentalView(
+            onDismiss = { /* Preview doesn't need to dismiss */ },
+            onSave = { rental ->
+                println("Saved rental: ${rental.propertyName}")
+            }
+        )
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -78,6 +79,34 @@ fun AccordionView(
                         .verticalScroll(rememberScrollState())
                 ) {
                     content()
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0F0F0)
+@Composable
+fun AccordionViewPreview() {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Example 1: Closed state
+        AccordionView(title = "Property Type") {
+            Text("This content is hidden until expanded", color = Color.White)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Example 2: Expanded with multiple items
+        // In a real preview, you can't force the 'isExpanded' state easily
+        // without passing it as a parameter, but you can click it in Interactive Mode!
+        AccordionView(title = "Amenities") {
+            Column {
+                repeat(5) { index ->
+                    Text(
+                        text = "Item #$index: Wi-Fi, Pool, etc.",
+                        color = Color.White,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
                 }
             }
         }

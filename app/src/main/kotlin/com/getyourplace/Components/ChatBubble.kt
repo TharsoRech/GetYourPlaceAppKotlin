@@ -7,9 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getyourplace.Models.ChatMessage
+import java.util.Date
+import java.util.UUID
 
 @Composable
 fun ChatBubble(message: ChatMessage) {
@@ -39,5 +42,46 @@ fun ChatBubble(message: ChatMessage) {
                 fontSize = 16.sp
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+fun ChatBubblePreview() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Example 1: Received message (Left side, Gray)
+        ChatBubble(
+            message = ChatMessage(
+                id = UUID.randomUUID().toString(),
+                text = "Hi! Is this apartment still available for next month?",
+                isSender = false,
+                timestamp = Date()
+            )
+        )
+
+        // Example 2: Sent message (Right side, Black)
+        ChatBubble(
+            message = ChatMessage(
+                id = UUID.randomUUID().toString(),
+                text = "Yes, it is! Would you like to schedule a viewing?",
+                isSender = true,
+                timestamp = Date()
+            )
+        )
+
+        // Example 3: Short sent message
+        ChatBubble(
+            message = ChatMessage(
+                id = UUID.randomUUID().toString(),
+                text = "Great!",
+                isSender = true,
+                timestamp = Date()
+            )
+        )
     }
 }

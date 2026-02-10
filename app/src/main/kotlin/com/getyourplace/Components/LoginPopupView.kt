@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getyourplace.Managers.AuthManager
@@ -37,7 +38,7 @@ fun LoginPopupView(
     canClose: Boolean = false,
     auth: AuthManager
 ) {
-    var mode by remember { mutableStateOf(AuthMode.LOGIN) }
+    val mode by remember { mutableStateOf(AuthMode.LOGIN) }
 
     // Form States
     var email by remember { mutableStateOf("") }
@@ -198,5 +199,22 @@ fun RowScope.RoleButton(role: UserRole, isSelected: Boolean, onClick: () -> Unit
         contentAlignment = Alignment.Center
     ) {
         Text(role.name, color = if (isSelected) Color.Black else Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun LoginPopupPreview() {
+    val context = LocalContext.current
+    // We use your companion mock method to create a preview-friendly manager
+    val mockAuth = remember { AuthManager.mock(context, UserRole.OWNER) }
+    val isPresented = remember { mutableStateOf(true) }
+
+    MaterialTheme {
+        LoginPopupView(
+            isPresented = isPresented,
+            canClose = true,
+            auth = mockAuth
+        )
     }
 }

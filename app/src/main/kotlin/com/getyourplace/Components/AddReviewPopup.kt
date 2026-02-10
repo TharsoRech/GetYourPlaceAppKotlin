@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.getyourplace.Models.UserReview
@@ -121,5 +122,18 @@ fun AddReviewPopup(
 
             Spacer(modifier = Modifier.weight(1f))
         }
+    }
+}
+@Preview(showSystemUi = true)
+@Composable
+fun AddReviewPopupPreview() {
+    // Wrapping in MaterialTheme ensures the TextField and Buttons use proper styling
+    MaterialTheme {
+        AddReviewPopup(
+            onDismiss = { /* Preview: Do nothing */ },
+            onSave = { review ->
+                println("Review Saved: ${review.rating} stars - ${review.comment}")
+            }
+        )
     }
 }

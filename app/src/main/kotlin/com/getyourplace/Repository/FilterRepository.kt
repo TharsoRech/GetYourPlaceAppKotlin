@@ -20,7 +20,7 @@ class FilterRepository : IFilterRepository {
         return ResidenceFilter(
             maxPrice = 10000000.0,
             maxSquareFootage = 2000.0,
-            selections = emptyMap(), // Equivalent to Swift's [:]
+            selections = mutableMapOf(), // Equivalent to Swift's [:]
             pickerOptions = mapOf(
                 "Type" to listOf("All", "Apartment", "House", "Villa", "Studio"),
                 "Beds" to listOf("None", "1", "2", "3", "4+"),
