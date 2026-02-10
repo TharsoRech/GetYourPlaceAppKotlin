@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.getyourplace.Models.ChatMessage
 import java.util.Date
 
@@ -24,7 +25,7 @@ fun ChatView(
     var newMessageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    // Auto-scroll to bottom when messages list size changes
+    // Efeito para rolar automaticamente para o fim quando houver novas mensagens
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -34,10 +35,14 @@ fun ChatView(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A1A1A)) // Color(red: 0.1, green: 0.1, blue: 0.1)
+            .background(Color(0xFF1A1A1A)) // Cor escura para combinar com o tema
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Header
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding() // Faz o layout subir quando o teclado aparece
+        ) {
+            // --- HEADER ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -47,14 +52,14 @@ fun ChatView(
                 Text(
                     text = title,
                     color = Color.White,
-                    style = MaterialTheme.typography.headlineSmall,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
+            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
-            // Message List
+            // --- LISTA DE MENSAGENS ---
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -68,26 +73,26 @@ fun ChatView(
                 }
             }
 
-            // Input View
+            // --- INPUT DE MENSAGEM ---
             ChatInputView(
                 text = newMessageText,
                 onTextChange = { newMessageText = it },
                 onSend = {
                     if (newMessageText.isNotBlank()) {
+                        // Adiciona a nova mensagem diretamente à lista mutável
                         messages.add(
                             ChatMessage(
-                                text = newMessageText,
+                                text = newMessageText.trim(),
                                 isSender = true,
                                 timestamp = Date()
                             )
                         )
                         newMessageText = ""
-                        // The LaunchedEffect above will handle the scroll!
                     }
                 }
             )
 
-            // Padding for system bars if needed (similar to .padding(.bottom, 84))
+            // Espaçamento inferior para garantir que não fique colado na barra de navegação
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

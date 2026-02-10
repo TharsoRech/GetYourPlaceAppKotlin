@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    // AJUSTE: Removido 'apply false' e 'version' (assumindo que já está no libs.versions ou Project build)
+    // Se o erro persistir, mantenha a versão aqui mas REMOVA o 'apply false'
+    id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
 
 android {
@@ -54,13 +57,21 @@ dependencies {
     // Tooling & Preview
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    // Other Libs - Reference corrected to avoid "minus" error
+    // Gson & Navigation
     implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Room
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    // O comando 'ksp' agora será reconhecido porque o plugin foi aplicado acima
+    ksp("androidx.room:room-compiler:$room_version")
+
+    // Image Loading
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

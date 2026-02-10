@@ -2,7 +2,7 @@ package com.getyourplace.Managers
 
 import android.content.Context
 import com.getyourplace.Models.UserProfile
-import com.getyourplace.Models.UserRole // Ensure this import exists
+import com.getyourplace.Models.UserRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,25 +18,28 @@ class AuthManager(private val context: Context) {
     val currentUser: StateFlow<UserProfile?> = _currentUser.asStateFlow()
 
     init {
-        // Fix: Added .shared and ensured the generic type is passed correctly
-        val savedProfile = CacheManager.shared.load<UserProfile>(context, profileKey)
-        if (savedProfile != null) {
-            _currentUser.value = savedProfile
-            _isAuthenticated.value = true
+        // Wrap in try-catch to prevent crashes in Previews or corrupted cache scenarios
+        try {
+            val savedProfile = CacheManager.shared.load<UserProfile>(context, profileKey)
+            if (savedProfile != null) {
+                _currentUser.value = savedProfile
+                _isAuthenticated.value = true
+            }
+        } catch (e: Exception) {
+            // In a real app, log this to Firebase or Sentry
+            println("AuthManager: Failed to load cached profile: ${e.message}")
         }
     }
 
     fun login(userProfile: UserProfile) {
         _currentUser.value = userProfile
         _isAuthenticated.value = true
-        // Fix: Added .shared
         CacheManager.shared.save(context, userProfile, profileKey)
     }
 
     fun logout() {
         _isAuthenticated.value = false
         _currentUser.value = null
-        // Fix: Added .shared
         CacheManager.shared.remove(context, profileKey)
     }
 
