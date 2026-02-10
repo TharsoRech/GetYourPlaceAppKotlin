@@ -1,4 +1,4 @@
-package com.getyourplace.ViewModels.Pages
+package com.getyourplace.Views.Pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.getyourplace.Components.MatchsResidencesView
 import com.getyourplace.Managers.AuthManager
 import com.getyourplace.Models.UserRole
 import com.getyourplace.Repository.*
+import com.getyourplace.ViewModels.Pages.HomePageViewModel
 import com.getyourplace.ViewModels.SubPages.MatchsView
 import com.getyourplace.ViewModels.SubPages.MyRentsView
 import com.getyourplace.ViewModels.SubPages.SearchResidenceView
