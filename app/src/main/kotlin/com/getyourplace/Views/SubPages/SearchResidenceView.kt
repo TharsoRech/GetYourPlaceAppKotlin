@@ -1,4 +1,4 @@
-package com.getyourplace.ViewModels.SubPages
+package com.getyourplace.Views.SubPages
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background

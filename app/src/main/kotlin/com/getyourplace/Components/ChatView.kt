@@ -25,7 +25,6 @@ fun ChatView(
     var newMessageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    // Efeito para rolar automaticamente para o fim quando houver novas mensagens
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -59,7 +58,6 @@ fun ChatView(
 
             HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
-            // --- LISTA DE MENSAGENS ---
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -73,7 +71,6 @@ fun ChatView(
                 }
             }
 
-            // --- INPUT DE MENSAGEM ---
             ChatInputView(
                 text = newMessageText,
                 onTextChange = { newMessageText = it },
@@ -93,7 +90,7 @@ fun ChatView(
             )
 
             // Espaçamento inferior para garantir que não fique colado na barra de navegação
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

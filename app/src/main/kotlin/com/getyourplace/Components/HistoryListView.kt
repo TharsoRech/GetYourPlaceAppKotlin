@@ -78,7 +78,7 @@ fun HistoryRow(
             IconButton(
                 onClick = onChatTap,
                 modifier = Modifier
-                    .background(Color.Blue.copy(alpha = 0.2f), CircleShape)
+                    .background(Color.White.copy(alpha = 0.2f), CircleShape)
                     .size(40.dp)
             ) {
                 Icon(Icons.Default.Message, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
@@ -87,7 +87,7 @@ fun HistoryRow(
 
         if (profile.status == EngagementStatus.PENDING) {
             Surface(
-                color = Color.Blue.copy(alpha = 0.1f),
+                color = Color.White.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Row(
@@ -100,7 +100,6 @@ fun HistoryRow(
                 }
             }
         } else {
-            // FIXED: BorderStroke instead of BoxStroke
             OutlinedButton(
                 onClick = onReset,
                 border = BorderStroke(1.dp, Color.Yellow.copy(alpha = 0.5f)),

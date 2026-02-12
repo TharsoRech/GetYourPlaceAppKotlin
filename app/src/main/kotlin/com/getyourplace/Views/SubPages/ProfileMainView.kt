@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +27,7 @@ import com.getyourplace.Models.UserProfile
 fun ProfileMainView(
     profile: UserProfile,
     authManager: AuthManager,
-    onProfileUpdate: (UserProfile) -> Unit // Para persistir as mudanças no banco/repositório
+    onProfileUpdate: (UserProfile) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(ProfileTab.ACCOUNT) }
 
@@ -42,12 +41,10 @@ fun ProfileMainView(
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            // 1. Header Fixo com Foto (Componente que você enviou)
             ProfileImageHeader()
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // 2. Custom Tab Bar (HStack + ScrollView no SwiftUI)
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -66,7 +63,6 @@ fun ProfileMainView(
 
             HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
-            // 3. Área de Conteúdo Dinâmica (Switch + Transition)
             Crossfade(
                 targetState = selectedTab,
                 animationSpec = spring(),

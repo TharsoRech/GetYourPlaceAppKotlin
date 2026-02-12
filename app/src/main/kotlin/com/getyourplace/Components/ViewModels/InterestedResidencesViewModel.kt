@@ -1,14 +1,21 @@
 package com.getyourplace.Components.ViewModels
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel // Change this
 import androidx.lifecycle.viewModelScope
 import com.getyourplace.Models.Residence
+import com.getyourplace.Repositories.Interfaces.IResidenceRepository
+import com.getyourplace.Repository.ResidenceRepository
 import kotlinx.coroutines.launch
 
-class InterestedResidencesViewModel : ViewModel() {
+
+class InterestedResidencesViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val residenceRepository: IResidenceRepository = ResidenceRepository(application)
+
     var interestedResidences by mutableStateOf<List<Residence>>(emptyList())
         private set
 
@@ -22,12 +29,13 @@ class InterestedResidencesViewModel : ViewModel() {
         getInterestedResidences()
     }
 
-    fun getInterestedResidences() {
+    private fun getInterestedResidences() {
         viewModelScope.launch {
             isLoading = true
             try {
-                // Replace with: interestedResidences = residenceRepository.getInterestedResidences()
-                // For now, it stays empty or you can load mocks here if testing
+                interestedResidences = residenceRepository.getInterestedResidences()
+            } catch (e: Exception) {
+                // Handle potential errors
             } finally {
                 isLoading = false
             }

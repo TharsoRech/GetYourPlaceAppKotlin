@@ -1,4 +1,4 @@
-package com.getyourplace.ViewModels.SubPages
+package com.getyourplace.Views.SubPages
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -26,7 +26,6 @@ import com.getyourplace.Models.Conversation
 fun MatchsView(
     authManager: AuthManager
 ) {
-    // Estados para controle de aba e conversa ativa
     var selectedTab by remember { mutableIntStateOf(0) }
     var activeConversation by remember { mutableStateOf<Conversation?>(null) }
 
@@ -35,7 +34,6 @@ fun MatchsView(
             .fillMaxSize()
             .background(Color(0xFF1A1A1A))
     ) {
-        // 1. Header / Segmented Control (Estilo SwiftUI)
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Color(0xFF1A1A1A)
@@ -47,8 +45,8 @@ fun MatchsView(
                     .padding(16.dp)
                     .height(40.dp)
                     .background(Color(0xFF333333), RoundedCornerShape(8.dp)),
-                indicator = {}, // Remove a linha padrão do Material Design
-                divider = {}    // Remove a linha divisória padrão
+                indicator = {},
+                divider = {}
             ) {
                 listOf("Matchs", "Chat").forEachIndexed { index, title ->
                     Tab(
@@ -72,24 +70,20 @@ fun MatchsView(
                 }
             }
         }
-
-        // 2. Content Area com Animações de Transição
+        
         Box(modifier = Modifier.fillMaxSize()) {
             AnimatedContent(
                 targetState = Triple(selectedTab, activeConversation != null, activeConversation),
                 transitionSpec = {
-                    // Se estiver entrando no Chat (indo para a direita)
                     if (targetState.second && !initialState.second) {
                         slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
                     } else {
-                        // Transição suave entre abas Matchs/Chat
                         fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(90))
                     }
                 },
                 label = "MatchsNavigation"
             ) { (tab, isChatActive, conversation) ->
                 when {
-                    // --- ABA 0: MATCHS ---
                     tab == 0 -> {
                         MatchsResidencesView(
                             onTabChange = { selectedTab = it },
@@ -98,10 +92,8 @@ fun MatchsView(
                         )
                     }
 
-                    // --- ABA 1: CHAT ATIVO ---
                     tab == 1 && isChatActive && conversation != null -> {
                         Column(modifier = Modifier.fillMaxSize()) {
-                            // Botão de Voltar para a lista de conversas
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -114,9 +106,6 @@ fun MatchsView(
                                 }
                             }
 
-                            // --- RESOLUÇÃO DO TYPE MISMATCH ---
-                            // Convertemos a List imutável do seu Model para uma MutableStateList
-                            // Isso permite que o ChatView use .add() e o Compose atualize a tela.
                             val messagesState = remember(conversation) {
                                 conversation.conversationMessages.toMutableStateList()
                             }
@@ -127,8 +116,6 @@ fun MatchsView(
                             )
                         }
                     }
-
-                    // --- ABA 1: LISTA DE CONVERSAS (PADRÃO) ---
                     else -> {
                         ConversationsListView(
                             activeConversation = activeConversation,
@@ -156,7 +143,6 @@ fun MatchsViewPreview() {
     // mockAuthManager.setAuthenticated(true)
 
     MaterialTheme {
-        // Envolvemos em uma Box escura para condizer com o tema do App
         Box(modifier = Modifier.background(Color(0xFF1A1A1A))) {
             MatchsView(authManager = mockAuthManager)
         }

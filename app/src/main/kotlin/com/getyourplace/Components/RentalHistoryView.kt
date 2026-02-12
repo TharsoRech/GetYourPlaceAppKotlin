@@ -8,9 +8,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.getyourplace.Components.ViewModels.RentalHistoryViewModel
 import com.getyourplace.Models.RentalHistory
 import com.getyourplace.Models.RentalStatus
@@ -26,13 +30,14 @@ import java.util.Date
 
 @Composable
 fun RentalHistoryView(
-    // Rename the parameter to avoid conflict with the function viewModel()
     rentalViewModel: RentalHistoryViewModel = viewModel()
 ) {
     RentalHistoryContent(
         isLoading = rentalViewModel.isLoading,
         rentals = rentalViewModel.rentals,
-        onFetch = { rentalViewModel.fetchRentals() }
+        onFetch = { rentalViewModel.fetchRentals() },
+        onDelete = { rental -> rentalViewModel.deleteRental(rental) },
+        onSaveNew = { rental -> rentalViewModel.addRental(rental) }
     )
 }
 
@@ -41,11 +46,12 @@ fun RentalHistoryView(
 fun RentalHistoryContent(
     isLoading: Boolean,
     rentals: List<RentalHistory>,
-    onFetch: () -> Unit
+    onFetch: () -> Unit,
+    onDelete: (RentalHistory) -> Unit,
+    onSaveNew: (RentalHistory) -> Unit
 ) {
     var isShowingAddPopup by remember { mutableStateOf(false) }
 
-    // OnAppear equivalent: Triggers when the UI is first drawn
     LaunchedEffect(Unit) {
         onFetch()
     }
@@ -58,7 +64,7 @@ fun RentalHistoryContent(
                 containerColor = Color.Black,
                 contentColor = Color.White,
                 shape = CircleShape,
-                modifier = Modifier.padding(bottom = 32.dp, end = 8.dp)
+                modifier = Modifier.padding(bottom = 60.dp, end = 8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -81,9 +87,64 @@ fun RentalHistoryContent(
                 EmptyStateView()
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(rentals) { rental ->
-                        RentalRow(rental)
+                    items(
+                        items = rentals,
+                        key = { it.id } // Required for swipe-to-dismiss animations
+                    ) { rental ->
+                        val dismissState = rememberSwipeToDismissBoxState(
+                            confirmValueChange = { value ->
+                                if (value == SwipeToDismissBoxValue.EndToStart) {
+                                    onDelete(rental) // Actually update the ViewModel state
+                                    true
+                                } else {
+                                    false
+                                }
+                            }
+                        )
+
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            enableDismissFromStartToEnd = false,
+                            backgroundContent = {
+                                val color = when (dismissState.dismissDirection) {
+                                    SwipeToDismissBoxValue.EndToStart -> Color.Red.copy(alpha = 0.8f)
+                                    else -> Color.Transparent
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .background(color, RoundedCornerShape(12.dp)),
+                                    contentAlignment = Alignment.CenterEnd
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete",
+                                        tint = Color.White,
+                                        modifier = Modifier.padding(end = 16.dp)
+                                    )
+                                }
+                            }
+                        ) {
+                            RentalRow(rental)
+                        }
                     }
+                }
+            }
+
+            if (isShowingAddPopup) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zIndex(2f)
+                ) {
+                    AddRentalView(
+                        onDismiss = { isShowingAddPopup = false },
+                        onSave = { newRental ->
+                            onSaveNew(newRental)
+                            isShowingAddPopup = false
+                        }
+                    )
                 }
             }
         }
@@ -113,8 +174,7 @@ fun RentalRow(rental: RentalHistory) {
                 fontSize = 14.sp
             )
         }
-        // Assuming you have the StatusBadge component created in the same package
-        StatusBadge(status = rental.status.label)
+        // If you have a StatusBadge component, re-add it here
     }
 }
 
@@ -171,47 +231,21 @@ fun EmptyStateView() {
 
 // --- PREVIEWS ---
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun RentalHistoryPreview() {
-    // We simulate the data without needing a real ViewModel instance
     val mockRentals = listOf(
-        RentalHistory(
-            propertyName = "Modern Villa",
-            location = "Los Angeles",
-            startDate = Date(),
-            endDate = Date(),
-            status = RentalStatus.COMPLETED
-        ),
-        RentalHistory(
-            propertyName = "Ocean Studio",
-            location = "Miami",
-            startDate = Date(),
-            endDate = Date(),
-            status = RentalStatus.UPCOMING
-        )
+        RentalHistory(propertyName = "Modern Villa", location = "LA", startDate = Date(), endDate = Date(), status = RentalStatus.COMPLETED),
+        RentalHistory(propertyName = "Ocean Studio", location = "Miami", startDate = Date(), endDate = Date(), status = RentalStatus.UPCOMING)
     )
 
     MaterialTheme {
-        // CALL THE CONTENT VIEW DIRECTLY FOR PREVIEWS
         RentalHistoryContent(
             isLoading = false,
             rentals = mockRentals,
-            onFetch = { /* No-op in preview */ }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Loading State")
-@Composable
-fun RentalHistoryLoadingPreview() {
-    MaterialTheme {
-        RentalHistoryContent(
-            isLoading = true,
-            rentals = emptyList(),
-            onFetch = {}
+            onFetch = {},
+            onDelete = {},
+            onSaveNew = {}
         )
     }
 }

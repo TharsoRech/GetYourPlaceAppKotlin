@@ -6,10 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getyourplace.Models.Conversation
+import com.getyourplace.Repository.ChatRepository
+import com.getyourplace.Repository.Interfaces.IChatRepository
+import com.getyourplace.Repository.Interfaces.IUserRepository
+import com.getyourplace.Repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ConversationListViewModel : ViewModel() {
+    private val chatRepository: IChatRepository = ChatRepository()
     var isLoading by mutableStateOf(false)
         private set
 
@@ -20,12 +25,12 @@ class ConversationListViewModel : ViewModel() {
         fetchConversations()
     }
 
-    fun fetchConversations() {
+    private fun fetchConversations() {
         viewModelScope.launch {
             isLoading = true
             // Simulate your BackgroundTaskRunner
             delay(1000)
-            // conversations = chatRepository.getConversations()
+            conversations = chatRepository.getConversations()
             isLoading = false
         }
     }

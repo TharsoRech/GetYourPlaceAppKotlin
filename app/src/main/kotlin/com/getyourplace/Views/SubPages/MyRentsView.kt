@@ -1,17 +1,13 @@
-package com.getyourplace.ViewModels.SubPages
+package com.getyourplace.Views.SubPages
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,13 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.getyourplace.Components.AccordionView
 import com.getyourplace.Components.ResidenceDetailPopup
 import com.getyourplace.Components.ResidenceListView
 import com.getyourplace.Managers.AuthManager
 import com.getyourplace.Models.Residence
 import com.getyourplace.Models.UserRole
+import com.getyourplace.ViewModels.SubPages.MyRentsViewModel
 import com.getyourplace.Views.RegisterResidenceView
-import com.getyourplace.Views.SubPages.MyRentsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,15 +43,13 @@ fun MyRentsView(
             .fillMaxSize()
             .background(Color(0xFF1A1A1A))
     ) {
-        // --- 1. CONTEÚDO PRINCIPAL ---
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(bottom = 100.dp) // Espaço para não cobrir pelo FAB ou Nav
+                .padding(bottom = 100.dp)
         ) {
             if (currentUser?.role == UserRole.OWNER) {
-                // Título para o Owner
                 Text(
                     text = "My Properties",
                     color = Color.White,
@@ -69,23 +64,25 @@ fun MyRentsView(
             }
         }
 
-        // --- 2. FLOATING ACTION BUTTON (Botão de Plus) ---
         if (currentUser?.role == UserRole.OWNER) {
             FloatingActionButton(
                 onClick = { isShowingRegister = true },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = 32.dp, end = 24.dp)
+                    .padding(bottom = 128.dp, end = 24.dp)
                     .size(60.dp),
                 containerColor = Color.White,
                 contentColor = Color.Black,
                 shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add", modifier = Modifier.size(30.dp))
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier.size(30.dp)
+                )
             }
         }
 
-        // --- 3. POPUP DE DETALHES ---
         AnimatedVisibility(
             visible = selectedResidence != null,
             enter = fadeIn() + scaleIn(initialScale = 0.9f),
@@ -97,7 +94,6 @@ fun MyRentsView(
                     residence = residence,
                     onDismiss = { selectedResidence = null },
                     onEditClick = {
-                        // Se clicar em editar, fecha o detalhe e abre o registro
                         selectedResidence = null
                         isShowingRegister = true
                     }
@@ -105,22 +101,28 @@ fun MyRentsView(
             }
         }
 
-        // --- 4. SHEET DE REGISTRO (MODAL) ---
         if (isShowingRegister) {
             ModalBottomSheet(
                 onDismissRequest = { isShowingRegister = false },
                 containerColor = Color(0xFF1A1A1A),
                 dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
-                modifier = Modifier.fillMaxHeight(0.95f) // Quase tela cheia
+                modifier = Modifier.fillMaxHeight(0.95f),
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             ) {
-                RegisterResidenceView(
-                    residenceToEdit = null, // Pode passar o residence se for editar
-                    onSave = { newResidence ->
-                        viewModel.handleSave(newResidence)
-                        isShowingRegister = false
-                    },
-                    onBack = { isShowingRegister = false }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 84.dp)
+                ) {
+                    RegisterResidenceView(
+                        residenceToEdit = null,
+                        onSave = { newResidence ->
+                            viewModel.handleSave(newResidence)
+                            isShowingRegister = false
+                        },
+                        onBack = { isShowingRegister = false }
+                    )
+                }
             }
         }
     }
@@ -129,12 +131,12 @@ fun MyRentsView(
 @Composable
 fun OwnerContent(viewModel: MyRentsViewModel, onSelect: (Residence) -> Unit) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        SimpleAccordion(title = "Published Properties") {
+        AccordionView (title = "Published Properties") {
             ResidenceListView(
                 residences = viewModel.publishResidences.filter { it.isPublished },
                 isLoading = viewModel.isLoading,
                 isFetchingMore = viewModel.isFetchingMore,
-                isScrollable = false, // CRÍTICO: Column já tem scroll
+                isScrollable = false,
                 onLoadMore = { },
                 onSelect = onSelect
             )
@@ -142,12 +144,12 @@ fun OwnerContent(viewModel: MyRentsViewModel, onSelect: (Residence) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        SimpleAccordion(title = "Unpublished Properties") {
+        AccordionView(title = "Unpublished Properties") {
             ResidenceListView(
                 residences = viewModel.publishResidences.filter { !it.isPublished },
                 isLoading = viewModel.isLoading,
                 isFetchingMore = viewModel.isFetchingMore,
-                isScrollable = false, // CRÍTICO: Column já tem scroll
+                isScrollable = false,
                 onLoadMore = { },
                 onSelect = onSelect
             )
@@ -173,38 +175,9 @@ fun RenterContent(viewModel: MyRentsViewModel, onSelect: (Residence) -> Unit) {
             residences = viewModel.publishResidences,
             isLoading = viewModel.isLoading,
             isFetchingMore = viewModel.isFetchingMore,
-            isScrollable = false, // Evita conflito de scroll
+            isScrollable = false,
             onLoadMore = { },
             onSelect = onSelect
         )
-    }
-}
-
-@Composable
-fun SimpleAccordion(title: String, content: @Composable () -> Unit) {
-    var expanded by remember { mutableStateOf(true) }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White.copy(alpha = 0.05f), RoundedCornerShape(8.dp))
-                .clickable { expanded = !expanded }
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Icon(
-                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = Color.White
-            )
-        }
-        AnimatedVisibility(visible = expanded) {
-            Box(modifier = Modifier.padding(top = 12.dp)) {
-                content()
-            }
-        }
     }
 }

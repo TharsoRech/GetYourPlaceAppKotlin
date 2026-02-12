@@ -82,13 +82,16 @@ fun DiscoveryView(
             ModalBottomSheet(
                 onDismissRequest = { showSheet = false },
                 containerColor = Color(0xFF1A1A1A),
-                dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) }
+                dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
+                modifier = Modifier.fillMaxHeight(0.95f),
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             ) {
-                // Call the View with the ViewModel it expects
-                PublicProfileView(
-                    onDismiss = { showSheet = false },
-                    viewModel = publicProfileViewModel
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    PublicProfileView(
+                        onDismiss = { showSheet = false },
+                        viewModel = publicProfileViewModel
+                    )
+                }
             }
         }
     }

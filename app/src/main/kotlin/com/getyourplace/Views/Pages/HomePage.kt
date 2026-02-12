@@ -17,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.getyourplace.Components.AuthGate
 import com.getyourplace.Managers.AuthManager
 import com.getyourplace.Models.UserRole
 import com.getyourplace.Repository.*
 import com.getyourplace.ViewModels.Pages.HomePageViewModel
-import com.getyourplace.ViewModels.SubPages.MatchsView
-import com.getyourplace.ViewModels.SubPages.MyRentsView
-import com.getyourplace.ViewModels.SubPages.SearchResidenceView
+import com.getyourplace.Views.SubPages.MatchsView
+import com.getyourplace.Views.SubPages.MyRentsView
+import com.getyourplace.Views.SubPages.SearchResidenceView
 import com.getyourplace.Views.InterestsView
 import com.getyourplace.Views.ProfileMainView
 
@@ -49,8 +50,6 @@ fun HomePage(
         }
     )
 
-    val isAuthenticated by authManager.isAuthenticated.collectAsState()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,19 +63,19 @@ fun HomePage(
                     authManager = authManager
                 )
 
-                "rents" -> AuthGate(isAuthenticated) {
+                "rents" -> AuthGate(authManager) {
                     MyRentsView(authManager)
                 }
 
-                "heart" -> AuthGate(isAuthenticated) {
+                "heart" -> AuthGate(authManager) {
                     InterestsView()
                 }
 
-                "macths" -> AuthGate(isAuthenticated) {
+                "macths" -> AuthGate(authManager) {
                     MatchsView(authManager = authManager)
                 }
 
-                "profile" -> AuthGate(isAuthenticated) {
+                "profile" -> AuthGate(authManager) {
                     ProfileMainView(
                         profile = homeViewModel.profile,
                         authManager = authManager,
@@ -126,21 +125,6 @@ fun MenuItem(
             tint = if (isSelected) Color.White else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
-    }
-}
-
-@Composable
-fun AuthGate(
-    isAuthenticated: Boolean,
-    content: @Composable () -> Unit
-) {
-    if (isAuthenticated) {
-        content()
-    } else {
-        // Replace with your actual Login View or a message
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Please login to see this content", color = Color.White)
-        }
     }
 }
 

@@ -69,14 +69,12 @@ fun InterestsView() {
             ) { page ->
                 when (page) {
                     0 -> {
-                        // FIXED: Using Named Arguments to avoid "Too many arguments" and "No value passed"
                         InterestedResidencesView(
                             viewModel = interestedVM,
                             onSelect = { res: Residence -> selectedResidence = res }
                         )
                     }
                     1 -> {
-                        // Assuming FavoriteResidencesView has a similar signature
                         FavoriteResidences(
                             favViewModel = favoritesVM,
                             onSelect = { res: Residence -> selectedResidence = res }
@@ -85,9 +83,6 @@ fun InterestsView() {
                 }
             }
         }
-
-        // --- Full Screen Popup ---
-        // Inside InterestsView.kt, update the AnimatedVisibility block:
 
         AnimatedVisibility(
             visible = selectedResidence != null,
