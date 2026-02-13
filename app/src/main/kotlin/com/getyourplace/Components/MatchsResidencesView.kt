@@ -61,12 +61,11 @@ fun MatchsResidencesView(
     Scaffold(
         containerColor = Color(0xFF1A1A1A),
         bottomBar = {
-            // This Column structure replicates the SwiftUI .padding(.bottom, 100)
             Column(modifier = Modifier.background(Color.Transparent)) {
                 NavigationBar(
-                    containerColor = Color.Black,
+                    containerColor = Color.Transparent,
                     tonalElevation = 0.dp,
-                    modifier = Modifier.height(80.dp)
+                    modifier = Modifier.height(100.dp).padding(top = 0.dp)
                 ) {
                     val itemColors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
@@ -109,7 +108,9 @@ fun MatchsResidencesView(
             if (viewModel.isLoading) {
                 MatchsResidencesSkeleton()
             } else {
-                Crossfade(targetState = selectedTabIndex, label = "TabTransition") { targetIndex ->
+                Crossfade(targetState = selectedTabIndex,
+                    label = "TabTransition",)
+                { targetIndex ->
                     when (targetIndex) {
                         0 -> {
                             if (currentUser?.role == UserRole.OWNER) {

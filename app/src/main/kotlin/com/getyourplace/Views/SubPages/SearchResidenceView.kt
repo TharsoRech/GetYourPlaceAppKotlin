@@ -15,6 +15,7 @@ import com.getyourplace.Components.*
 import com.getyourplace.Managers.AuthManager
 import com.getyourplace.Models.Residence
 import com.getyourplace.ViewModels.Pages.HomePageViewModel
+import com.getyourplace.Views.RegisterResidenceView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,13 +25,13 @@ fun SearchResidenceView(
 ) {
     var selectedResidence by remember { mutableStateOf<Residence?>(null) }
     val isAuthenticated by authManager.isAuthenticated.collectAsState()
+    var isShowingRegister by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF1A1A1A))
     ) {
-        // --- 1. CONTEÚDO PRINCIPAL ---
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -49,7 +50,6 @@ fun SearchResidenceView(
                 Spacer(modifier = Modifier.size(45.dp))
             }
 
-            // Barra de Busca
             CustomSearchBar(
                 text = viewModel.searchText,
                 onTextChange = { viewModel.searchText = it },
@@ -58,7 +58,6 @@ fun SearchResidenceView(
                 isFilterActive = viewModel.isFilterActive
             )
 
-            // Filtros Rápidos (Horizontal)
             ClickFilterList(
                 filters = viewModel.filters,
                 onClickFilter = { filter ->
@@ -66,7 +65,6 @@ fun SearchResidenceView(
                 }
             )
 
-            // Lista de Residências
             ResidenceListView(
                 residences = viewModel.residences,
                 isLoading = viewModel.isLoading,
@@ -96,7 +94,6 @@ fun SearchResidenceView(
             }
         }
 
-        // --- 3. POPUP DE DETALHES ---
         AnimatedVisibility(
             visible = selectedResidence != null,
             enter = fadeIn() + scaleIn(initialScale = 0.9f),
@@ -107,16 +104,14 @@ fun SearchResidenceView(
                 ResidenceDetailPopup(
                     residence = residence,
                     onDismiss = { selectedResidence = null },
-                    onEditClick = { resToEdit ->
-                        // Lógica para abrir tela de edição
-                        selectedResidence = null
-                        // Ex: navigation.navigate("Edit", resToEdit)
+                    onEditClick = {
+                        selectedResidence = residence
+                        isShowingRegister = true
                     }
                 )
             }
         }
 
-        // --- 4. BOTTOM SHEET DE FILTROS ---
         if (viewModel.showingFilters) {
             ModalBottomSheet(
                 onDismissRequest = { viewModel.showingFilters = false },
@@ -132,6 +127,31 @@ fun SearchResidenceView(
                         viewModel.showingFilters = false
                     }
                 )
+            }
+        }
+
+        if (isShowingRegister) {
+            ModalBottomSheet(
+                onDismissRequest = { isShowingRegister = false },
+                containerColor = Color(0xFF1A1A1A),
+                dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
+                modifier = Modifier.fillMaxHeight(0.95f),
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 84.dp)
+                ) {
+                    RegisterResidenceView(
+                        residenceToEdit = null,
+                        onSave = { newResidence ->
+                           // viewModel.handleSave(newResidence)
+                            isShowingRegister = false
+                        },
+                        onBack = { isShowingRegister = false }
+                    )
+                }
             }
         }
     }

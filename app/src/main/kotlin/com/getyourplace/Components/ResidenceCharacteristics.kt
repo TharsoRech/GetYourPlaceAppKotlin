@@ -20,46 +20,38 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ResidenceCharacteristics(
     text: String,
-    icon: ImageVector, // We pass the ImageVector directly for type safety
+    icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    // Note: removed Box and fillMaxWidth() to allow horizontal stacking
+    Row(
         modifier = modifier
-            .fillMaxWidth()
-            // Equivalent to height(100) in SwiftUI, though 100dp is quite large for a pill.
-            // Using a standard height or wrapContent to match your padding logic.
-            .heightIn(max = 100.dp),
-        contentAlignment = Alignment.Center
+            .background(
+                color = Color.Gray.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(32.dp)
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .background(
-                    color = Color.Gray.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(32.dp) // High corner radius creates the pill shape
-                )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = text,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black
-            )
+        // Swapped order: Icon then Text usually looks better in real estate apps
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = Color.Black.copy(alpha = 0.7f)
+        )
 
-            Spacer(modifier = Modifier.width(4.dp)) // Added small gap between text and icon
+        Spacer(modifier = Modifier.width(6.dp))
 
-            Icon(
-                imageVector = icon,
-                contentDescription = null, // Decorative icon
-                modifier = Modifier.size(14.dp),
-                tint = Color.Black
-            )
-        }
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black
+        )
     }
 }
-
 // --- PREVIEW ---
 
 @Preview(showBackground = true)

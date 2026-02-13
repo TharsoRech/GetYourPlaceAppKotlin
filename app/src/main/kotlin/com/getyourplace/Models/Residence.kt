@@ -2,6 +2,7 @@ package com.getyourplace.Models
 
 import android.content.Context
 import com.getyourplace.Helpers.asAssetBase64
+import com.getyourplace.R
 import java.util.UUID
 import java.util.Date
 import java.text.NumberFormat
@@ -27,8 +28,10 @@ data class Residence(
     var isPublished: Boolean = false,
     var mainImageBase64: String,
     var galleryImagesBase64: List<String> = emptyList(),
+    var galleryImageRes: List<Int?> = emptyList(),
     var favorite: Boolean = false,
-    var isMine: Boolean = false
+    var isMine: Boolean = false,
+    val imageRes: Int? = null,
 ) {
     // --- Formatters (Equivalent to Swift Computed Properties) ---
 
@@ -60,8 +63,14 @@ data class Residence(
             numberOfGarages = 1,
             acceptPets = true,
             rating = 5.0,
-            mainImageBase64 = "house1".asAssetBase64(context),
-            isPublished = true
+            mainImageBase64 = "",
+            imageRes = R.drawable.house1,
+            isPublished = true,
+            galleryImageRes = listOf(
+                R.drawable.house1,
+                R.drawable.house2,
+                R.drawable.house3
+            )
         )
 
         fun mocks(context: Context) = listOf(
@@ -80,7 +89,13 @@ data class Residence(
                 numberOfGarages = 1,
                 acceptPets = true,
                 rating = 5.0,
-                mainImageBase64 = "house2".asAssetBase64(context)
+                mainImageBase64 = "",
+                imageRes = R.drawable.house2,
+                galleryImageRes = listOf(
+                    R.drawable.house1,
+                    R.drawable.house2,
+                    R.drawable.house3
+                )
             ),
             Residence(
                 name = "Skyline Apartment",
@@ -97,8 +112,14 @@ data class Residence(
                 numberOfGarages = 0,
                 acceptPets = false,
                 rating = 4.5,
-                mainImageBase64 = "house3".asAssetBase64(context),
-                favorite = true
+                mainImageBase64 = "",
+                imageRes = R.drawable.house3,
+                favorite = true,
+                galleryImageRes = listOf(
+                    R.drawable.house1,
+                    R.drawable.house2,
+                    R.drawable.house3
+                )
             ),
             Residence(
                 name = "Cozy Cottage",
@@ -115,8 +136,14 @@ data class Residence(
                 numberOfGarages = 1,
                 acceptPets = true,
                 rating = 4.8,
-                mainImageBase64 = "house3".asAssetBase64(context),
-                isMine = true
+                mainImageBase64 = "",
+                imageRes = R.drawable.house3,
+                isMine = true,
+                galleryImageRes = listOf(
+                    R.drawable.house1,
+                    R.drawable.house2,
+                    R.drawable.house3
+                )
             )
         )
     }

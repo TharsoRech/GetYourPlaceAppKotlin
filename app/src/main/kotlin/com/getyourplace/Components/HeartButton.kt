@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -19,44 +21,48 @@ import androidx.compose.ui.unit.dp
 fun HeartButton(
     isLiked: Boolean,
     isAuthenticated: Boolean,
-    likedColor: Color = Color.Magenta,
+    likedColor: Color = Color.Red, // Changed default to Red
     onLikedChange: (Boolean) -> Unit
 ) {
-    // Only show the button if authenticated (SwiftUI 'if auth.isAuthenticated')
     if (isAuthenticated) {
-
-        // 1. Setup the scale animation (SwiftUI .scaleEffect)
+        // Setup the scale animation
         val scale by animateFloatAsState(
-            targetValue = if (isLiked) 1.2f else 1.0f,
+            targetValue = if (isLiked) 1.3f else 1.0f, // Slightly higher zoom for effect
             animationSpec = spring(
-                dampingRatio = 0.6f, // SwiftUI dampingFraction
-                stiffness = Spring.StiffnessLow // Controls the "spring" speed
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
             ),
             label = "HeartScale"
         )
 
         IconToggleButton(
             checked = isLiked,
-            onCheckedChange = { onLikedChange(it) }
+            onCheckedChange = { onLikedChange(it) },
+            // Explicitly set colors for the toggle button container
+            colors = IconButtonDefaults.iconToggleButtonColors(
+                contentColor = Color.Gray,
+                checkedContentColor = likedColor
+            )
         ) {
             Icon(
                 imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 contentDescription = "Like Button",
+                // Use the state to drive the color directly if the button colors fail
                 tint = if (isLiked) likedColor else Color.Gray,
                 modifier = Modifier
                     .size(30.dp)
-                    .scale(scale) // Applying the spring animation
+                    .scale(scale)
             )
         }
     }
 }
 
 // --- PREVIEW ---
-
 @Preview(showBackground = true, backgroundColor = 0xFF1A1A1A)
 @Composable
 fun HeartButtonPreview() {
-    // Wrapper to hold state for the preview
+    // This state is CRITICAL. In your real app, make sure the
+    // ViewModel or parent state is actually updating 'isLiked'.
     var liked by remember { mutableStateOf(false) }
 
     MaterialTheme {

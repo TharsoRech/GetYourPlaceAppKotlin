@@ -34,22 +34,6 @@ fun EditProfileView(
             )
         },
         containerColor = Color(0xFF1A1A1A),
-        bottomBar = {
-            Box(modifier = Modifier.padding(24.dp)) {
-                Button(
-                    onClick = {
-                        profile.email = email
-                        profile.password = password
-                        onSave(profile)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(55.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-                ) {
-                    Text("Save", color = Color.Black, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -59,7 +43,6 @@ fun EditProfileView(
                 .padding(horizontal = 24.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
-            // ADJUSTED: Using 'text' and 'onTextChange' to match your Component
             CustomInputField(
                 label = "Email",
                 text = email,
@@ -76,6 +59,7 @@ fun EditProfileView(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 ActionButton(text = "Log Out", textColor = Color.White, onClick = onLogout)
                 ActionButton(text = "Remove Account", textColor = Color.Red, onClick = onLogout)
+                ActionButton(text = "Save Changes", textColor = Color.White, onClick = { onSave} )
             }
         }
     }
@@ -85,7 +69,9 @@ fun EditProfileView(
 fun ActionButton(text: String, textColor: Color, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(55.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
     ) {

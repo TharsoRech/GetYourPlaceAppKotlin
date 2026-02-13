@@ -1,7 +1,6 @@
 package com.getyourplace.Components
 
-import android.graphics.Bitmap
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -15,36 +14,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+import coil.compose.AsyncImage
+
 @Composable
 fun ImageCarousel(
-    images: List<Bitmap>, // Android uses Bitmap for UIImage equivalent
+    imageResIds: List<Int>, // Changed from List<Bitmap> to List<Int>
     modifier: Modifier = Modifier
 ) {
-    if (images.isEmpty()) {
+    if (imageResIds.isEmpty()) {
         PlaceholderView(modifier)
     } else {
-        // rememberPagerState is the controller for current page and total count
-        val pagerState = rememberPagerState(pageCount = { images.size })
+        val pagerState = rememberPagerState(pageCount = { imageResIds.size })
 
         Box(modifier = modifier.fillMaxWidth()) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                Image(
-                    bitmap = images[page].asImageBitmap(),
+                // Using AsyncImage instead of Image(bitmap) to prevent UI lag
+                AsyncImage(
+                    model = imageResIds[page],
                     contentDescription = "Carousel Image $page",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop // Equivalent to .aspectRatio(contentMode: .fill)
+                    contentScale = ContentScale.Crop
                 )
             }
 
-            // Indicator Dots (SwiftUI PageTabViewStyle)
+            // Indicator Dots
             Row(
                 Modifier
                     .wrapContentHeight()
@@ -88,25 +88,26 @@ private fun PlaceholderView(modifier: Modifier) {
 @Preview(name = "Image Carousel")
 @Composable
 fun ImageCarouselPreview() {
-    // Creating a simple 1x1 Bitmap for mock data
-    val conf = Bitmap.Config.ARGB_8888
-    val redBitmap = Bitmap.createBitmap(1, 1, conf).apply { setPixel(0, 0, android.graphics.Color.RED) }
-    val blueBitmap = Bitmap.createBitmap(1, 1, conf).apply { setPixel(0, 0, android.graphics.Color.BLUE) }
-
-    val mockImages = listOf(redBitmap, blueBitmap)
+    // Use real drawable resource IDs from your project
+    // I'm using house1, house2, house3 based on your Residence mocks
+    val mockResourceIds = listOf(
+        com.getyourplace.R.drawable.house1,
+        com.getyourplace.R.drawable.house2,
+        com.getyourplace.R.drawable.house3
+    )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(Color(0xFF0D0D12)) // Dark background to match your popup
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         ImageCarousel(
-            images = mockImages,
+            imageResIds = mockResourceIds,
             modifier = Modifier
                 .height(250.dp)
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
         )
     }
 }

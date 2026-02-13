@@ -32,7 +32,7 @@ fun DiscoveryView(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text("Discover", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("Matches", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color(0xFF1A1A1A)

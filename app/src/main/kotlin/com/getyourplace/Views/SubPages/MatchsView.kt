@@ -48,12 +48,12 @@ fun MatchsView(
                 indicator = {},
                 divider = {}
             ) {
-                listOf("Matchs", "Chat").forEachIndexed { index, title ->
+                listOf("Matches", "Chat").forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(0.dp)
                             .background(
                                 if (selectedTab == index) Color.White else Color.Transparent,
                                 RoundedCornerShape(6.dp)

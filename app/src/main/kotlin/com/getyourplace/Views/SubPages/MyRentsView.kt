@@ -94,7 +94,7 @@ fun MyRentsView(
                     residence = residence,
                     onDismiss = { selectedResidence = null },
                     onEditClick = {
-                        selectedResidence = null
+                        selectedResidence = residence
                         isShowingRegister = true
                     }
                 )

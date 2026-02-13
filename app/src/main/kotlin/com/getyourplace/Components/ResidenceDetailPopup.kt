@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.getyourplace.Models.Residence
+import com.getyourplace.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -68,7 +71,13 @@ fun ResidenceDetailPopup(
                     .background(Color(0xFF0D0D12).copy(alpha = 0.95f))
                     .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(32.dp))
             ) {
-                ImageHeaderSection(residence, isLoading)
+                ImageCarousel(
+                    imageResIds = residence.galleryImageRes.filterNotNull(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp) // Adjusted height for a nicer look
+                        .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                )
 
                 Column(
                     modifier = Modifier
@@ -114,39 +123,6 @@ fun ResidenceDetailPopup(
                     showingInterestPopup = false
                     onDismiss()
                 }
-            }
-        }
-    }
-}
-
-// --- Sub-Components (SwiftUI private vars converted to @Composables) ---
-
-@Composable
-fun ImageHeaderSection(residence: Residence, isLoading: Boolean) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(220.dp)
-            .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-    ) {
-        if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize().background(Color.White.copy(0.1f)))
-        } else {
-            val imageBitmap = remember(residence.mainImageBase64) {
-                try {
-                    val decodedBytes = Base64.decode(residence.mainImageBase64, Base64.DEFAULT)
-                    BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size).asImageBitmap()
-                } catch (e: Exception) { null }
-            }
-            if (imageBitmap != null) {
-                Image(
-                    bitmap = imageBitmap,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Box(modifier = Modifier.fillMaxSize().background(Color.Gray.copy(0.3f)))
             }
         }
     }

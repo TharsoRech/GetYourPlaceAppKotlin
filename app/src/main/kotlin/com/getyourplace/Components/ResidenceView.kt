@@ -1,28 +1,28 @@
 package com.getyourplace.Components
 
-import android.graphics.BitmapFactory
-import android.util.Base64
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Bed
+import androidx.compose.material.icons.filled.Bathtub
+import androidx.compose.material.icons.filled.Garage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.getyourplace.Models.Residence
 
 @Composable
@@ -31,47 +31,40 @@ fun ResidenceView(
     onTap: () -> Unit,
     onFavoriteToggle: (Boolean) -> Unit = {}
 ) {
-    // Card Container
+    var isLiked by remember(residence.id, residence.favorite) {
+        mutableStateOf(residence.favorite)
+    }
+
     Card(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .shadow(elevation = 12.dp, shape = RoundedCornerShape(24.dp), ambientColor = Color.Black.copy(0.08f))
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(24.dp),
+                ambientColor = Color.Black.copy(0.08f)
+            )
             .clickable { onTap() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column {
-            // Top Section: Image & Badge
             Box(modifier = Modifier.height(250.dp).fillMaxWidth()) {
-                // Image decoding logic
-                val imageBitmap = remember(residence.mainImageBase64) {
-                    try {
-                        val decodedBytes = Base64.decode(residence.mainImageBase64, Base64.DEFAULT)
-                        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size).asImageBitmap()
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(residence.imageRes ?: residence.mainImageBase64) // It handles both!
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = residence.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
 
-                if (imageBitmap != null) {
-                    Image(
-                        bitmap = imageBitmap,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(modifier = Modifier.fillMaxSize().background(Color.LightGray))
-                }
-
-                // Overlay UI (Type Badge and Heart)
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    // Type Capsule
                     Surface(
                         shape = CircleShape,
                         color = Color.White.copy(alpha = 0.9f)
@@ -86,24 +79,24 @@ fun ResidenceView(
                         )
                     }
 
-                    // Heart Button (Placeholder for your HeartButton component)
-                    IconButton(
-                        onClick = { onFavoriteToggle(!residence.favorite) },
-                        modifier = Modifier.background(Color.White.copy(alpha = 0.3f), CircleShape)
-                    ) {
-                        // Logic for Red/White heart would go here
-                    }
+                    HeartButton(
+                        isLiked = isLiked,
+                        isAuthenticated = true,
+                        likedColor = Color.Red,
+                        onLikedChange = { newValue ->
+                            isLiked = newValue
+                            onFavoriteToggle(newValue)
+                        }
+                    )
                 }
             }
 
-            // Info Section
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    // Title and Location
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = residence.name,
@@ -118,7 +111,6 @@ fun ResidenceView(
                         )
                     }
 
-                    // Price and Action
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             text = residence.formattedPrice,
@@ -137,45 +129,45 @@ fun ResidenceView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Characteristics Row
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp), // Spacing between pills
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ResidenceCharacteristic(residence.formattedNumberOfBeds, "Bed")
-                    ResidenceCharacteristic(residence.formattedNumberOfBaths, "Bath")
-                    ResidenceCharacteristic(residence.formattedNumberOfGarages, "Garage")
+                    // Bed characteristic
+                    ResidenceCharacteristics(
+                        text = residence.formattedNumberOfBeds,
+                        icon = Icons.Default.Bed
+                    )
+
+                    // Bath characteristic
+                    ResidenceCharacteristics(
+                        text = residence.formattedNumberOfBaths,
+                        icon = Icons.Default.Bathtub // Requires material-icons-extended
+                    )
+
+                    // Garage characteristic (Conditional)
+                    if (residence.hasGarage) {
+                        ResidenceCharacteristics(
+                            text = residence.formattedNumberOfGarages,
+                            icon = Icons.Default.Garage
+                        )
+                    }
                 }
+
             }
         }
     }
 }
 
-@Composable
-fun ResidenceCharacteristic(text: String, label: String) {
-    // Simplified version of your characteristic component
-    Row(modifier = Modifier.padding(end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = text, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.DarkGray)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = label, fontSize = 12.sp, color = Color.Gray)
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF1A1A1A)
+@Preview(showBackground = true)
 @Composable
 fun ResidenceViewPreview() {
-    // Creating a mock residence object
-    val context = LocalContext.current // Gets the Android Context for the preview
+    val context = LocalContext.current
     val mockResidence = Residence.mock(context)
-
     MaterialTheme {
-        // We wrap it in a Box with padding so it doesn't hug the preview edges
-        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            ResidenceView(
-                residence = mockResidence,
-                onTap = { /* Action for preview clicks */ },
-                onFavoriteToggle = { isLiked -> println("Liked: $isLiked") }
-            )
-        }
+        ResidenceView(residence = mockResidence, onTap = {})
     }
 }
