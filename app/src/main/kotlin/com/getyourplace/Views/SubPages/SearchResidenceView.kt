@@ -144,12 +144,16 @@ fun SearchResidenceView(
                         .padding(bottom = 84.dp)
                 ) {
                     RegisterResidenceView(
-                        residenceToEdit = null,
-                        onSave = { newResidence ->
-                           // viewModel.handleSave(newResidence)
+                        residenceToEdit = selectedResidence,
+                        onSave = { updatedResidence ->
+                            //viewModel.handleSave(updatedResidence)
                             isShowingRegister = false
+                            selectedResidence = null // Clear selection after save
                         },
-                        onBack = { isShowingRegister = false }
+                        onBack = {
+                            isShowingRegister = false
+                            selectedResidence = null
+                        }
                     )
                 }
             }

@@ -103,7 +103,10 @@ fun MyRentsView(
 
         if (isShowingRegister) {
             ModalBottomSheet(
-                onDismissRequest = { isShowingRegister = false },
+                onDismissRequest = {
+                    isShowingRegister = false
+                    if (selectedResidence != null) selectedResidence = null
+                },
                 containerColor = Color(0xFF1A1A1A),
                 dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
                 modifier = Modifier.fillMaxHeight(0.95f),
@@ -115,12 +118,16 @@ fun MyRentsView(
                         .padding(bottom = 84.dp)
                 ) {
                     RegisterResidenceView(
-                        residenceToEdit = null,
-                        onSave = { newResidence ->
-                            viewModel.handleSave(newResidence)
+                        residenceToEdit = selectedResidence,
+                        onSave = { updatedResidence ->
+                            viewModel.handleSave(updatedResidence)
                             isShowingRegister = false
+                            selectedResidence = null // Clear selection after save
                         },
-                        onBack = { isShowingRegister = false }
+                        onBack = {
+                            isShowingRegister = false
+                            selectedResidence = null
+                        }
                     )
                 }
             }

@@ -33,22 +33,23 @@ fun RowScope.MenuItem(
     isSelected: Boolean,
     action: () -> Unit
 ) {
+    // Colors to match your SwiftUI logic
     val contentColor = if (isSelected) Color.White else Color.Black
     val backgroundColor = if (isSelected) Color.Black else Color.White.copy(alpha = 0.9f)
 
     Box(
         modifier = Modifier
-            .weight(1f) // Distributes space equally among all MenuItems in the Row
-            .padding(horizontal = 4.dp)
+            .weight(1f) // Takes up equal space in the Row
+            .padding(horizontal = 2.dp) // Gap between pills
             .clip(RoundedCornerShape(32.dp))
             .background(backgroundColor)
             .clickable { action() }
-            .padding(vertical = 8.dp, horizontal = 4.dp),
+            .padding(vertical = 16.dp), // Height of the pill
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = icon,
@@ -60,10 +61,9 @@ fun RowScope.MenuItem(
                 text = label,
                 color = contentColor,
                 fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

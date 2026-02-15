@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.getyourplace.Components.ViewModels.PublicProfileViewModel
 import com.getyourplace.Models.*
 
@@ -100,14 +102,20 @@ fun PublicProfileView(
         }
 
         if (showReviewSheet) {
-            ModalBottomSheet(
+            Dialog(
                 onDismissRequest = { showReviewSheet = false },
-                containerColor = Color(0xFF1A1A1A)
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false // Allows the popup to be full screen
+                )
             ) {
-                // AddReviewPopup placeholder
-                Box(Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
-                    Text("Review Popup Content", color = Color.White)
-                }
+                // Your existing component fits perfectly here because it has its own Scaffold
+                AddReviewPopup(
+                    onDismiss = { showReviewSheet = false },
+                    onSave = { newReview ->
+                        viewModel.addReview(newReview) // Call your viewModel to update the list
+                        showReviewSheet = false
+                    }
+                )
             }
         }
     }

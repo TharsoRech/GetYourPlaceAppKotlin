@@ -2,7 +2,6 @@ package com.getyourplace.Views.Pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -10,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.getyourplace.Components.AuthGate
+import com.getyourplace.Components.MenuItem
 import com.getyourplace.Managers.AuthManager
 import com.getyourplace.Models.UserRole
 import com.getyourplace.Repository.*
@@ -87,20 +86,19 @@ fun HomePage(
             }
         }
 
-        // --- Bottom Navigation Bar ---
-        // Matches your HStack with cornerRadius(128)
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp, start = 16.dp, end = 16.dp)
-                .background(Color.Black.copy(alpha = 0.9f), RoundedCornerShape(128.dp))
-                .padding(vertical = 8.dp, horizontal = 12.dp)
+                .padding(bottom = 24.dp, start = 8.dp, end = 8.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // We use the custom MenuItem we defined that uses RowScope.weight(1f)
                 MenuItem(Icons.Default.Home, "Home", selectedTab == "home") { selectedTab = "home" }
                 MenuItem(Icons.Default.Key, "My Rents", selectedTab == "rents") { selectedTab = "rents" }
                 MenuItem(Icons.Default.Favorite, "Interests", selectedTab == "heart") { selectedTab = "heart" }
@@ -108,23 +106,6 @@ fun HomePage(
                 MenuItem(Icons.Default.AccountCircle, "Profile", selectedTab == "profile") { selectedTab = "profile" }
             }
         }
-    }
-}
-
-@Composable
-fun MenuItem(
-    icon: ImageVector,
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    IconButton(onClick = onClick) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = if (isSelected) Color.White else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
     }
 }
 
